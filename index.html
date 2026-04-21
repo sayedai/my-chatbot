@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My AI Chatbot</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    input {
+      width: 70%;
+      padding: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #chat {
+      margin-top: 20px;
+      background: #222;
+      padding: 15px;
+      min-height: 200px;
+      text-align: left;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🤖 My AI Chatbot</h1>
+
+<input id="input" placeholder="Ask something..." />
+<button onclick="sendMessage()">Send</button>
+
+<div id="chat"></div>
+
+<script>
+async function sendMessage() {
+  let userText = document.getElementById("input").value;
+
+  document.getElementById("chat").innerHTML +=
+    "<p><b>You:</b> " + userText + "</p>";
+
+  let response = await fetch(
+    "https://api-inference.huggingface.co/models/gpt2",
+    {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer YOUR_API_KEY",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ inputs: userText })
+    }
+  );
+
+  let data = await response.json();
+
+  let botReply = data[0]?.generated_text || "Bot is thinking...";
+
+  document.getElementById("chat").innerHTML +=
+    "<p><b>Bot:</b> " + botReply + "</p>";
+}
+</script>
+
+</body>
+</html>
